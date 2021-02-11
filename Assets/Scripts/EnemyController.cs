@@ -20,7 +20,6 @@ public class EnemyController : MonoBehaviour
     [SerializeField]
     float deadTime = 3;
 
-    [SerializeField]
     GameObject target;
 
     bool attacking = false;
@@ -57,7 +56,7 @@ public class EnemyController : MonoBehaviour
         boxCollider = GetComponent<BoxCollider>();
         rigidBody = GetComponent<Rigidbody>();
         agent = GetComponent<NavMeshAgent>();
-
+        target = GameObject.FindGameObjectWithTag("Player");
         shot = GameObject.FindGameObjectWithTag("Player").GetComponentInChildren<Shot>();
         InitCharacter();
     }
