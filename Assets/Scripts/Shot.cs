@@ -59,6 +59,8 @@ public class Shot : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Confined;
         InitGun();
     }
 
@@ -68,6 +70,12 @@ public class Shot : MonoBehaviour
         if(shootEnabled & ammo > 0 & GetInput())
         {
             StartCoroutine(ShootTimer());
+        }
+
+        if(Input.GetKeyDown(KeyCode.Escape))
+        {
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
         }
     }
 
