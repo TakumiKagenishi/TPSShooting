@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Shot : MonoBehaviour
 {
@@ -19,13 +20,19 @@ public class Shot : MonoBehaviour
     int maxAmmo = 100;
 
     [SerializeField]
-    int damage = 1;
+    int maxSupplyValue = 50;
 
     [SerializeField]
-    float shootInterval = 0.15f;
+    int damage = 10;
+
+    [SerializeField]
+    float shootInterval = 0.1f;
 
     [SerializeField]
     float shootRange = 50;
+
+    [SerializeField]
+    float supplyInterval = 0.1f;
 
     [SerializeField]
     Vector3 muzzleFlashScale;
@@ -36,9 +43,20 @@ public class Shot : MonoBehaviour
     [SerializeField]
     GameObject hitEffectPrefab;
 
-    bool shooting = false;
+    [SerializeField]
+    Image ammoGauge;
 
-    int ammo;
+    [SerializeField]
+    Text ammoText;
+
+    [SerializeField]
+    Image supplyGauge;
+
+    bool shooting = false;
+    bool supplying = false;
+
+    int ammo = 0;
+    int supplyValue = 0;
 
     GameObject muzzleFlash;
 
@@ -49,11 +67,35 @@ public class Shot : MonoBehaviour
         set
         {
             ammo = Mathf.Clamp(value, 0, maxAmmo);
+            ammoText.text = ammo.ToString("D3");
+            float scaleX = (float)ammo / maxAmmo;
+            ammoGauge.rectTransform.localScale = new Vector3(scaleX, 1, 1);
         }
 
         get
         {
             return ammo;
+        }
+    }
+
+    public int SupplyValue
+    {
+        set
+        {
+            supplyValue = Mathf.Clamp(value, 0, maxSupplyValue);
+            if(supplyValue >= maxSupplyValue)
+            {
+                ammo = maxAmmo;
+                supplyValue = 0;
+            }
+
+            float scaleX = (float)supplyValue / maxSupplyValue;
+            supplyGauge.rectTransform.localScale = new Vector3(scaleX, 1, 1);
+        }
+
+        get
+        {
+            return supplyValue;
         }
     }
     // Start is called before the first frame update
@@ -72,6 +114,11 @@ public class Shot : MonoBehaviour
             StartCoroutine(ShootTimer());
         }
 
+        if(shootEnabled)
+        {
+            StartCoroutine(SupplyTimer());
+        }
+
         if(Input.GetKeyDown(KeyCode.Escape))
         {
             Cursor.visible = true;
@@ -79,9 +126,10 @@ public class Shot : MonoBehaviour
         }
     }
 
-    void InitGun()
+    public void InitGun()
     {
         Ammo = maxAmmo;
+        SupplyValue = 0;
     }
 
     bool GetInput()
@@ -146,6 +194,17 @@ public class Shot : MonoBehaviour
         }
     }
 
+    IEnumerator SupplyTimer()
+    {
+        if(!supplying)
+        {
+            supplying = true;
+            SupplyValue++;
+            yield return new WaitForSeconds(supplyInterval);
+            supplying = false;
+        }
+    }
+
     void Shoot()
     {
         Ray ray = new Ray(transform.position, transform.forward);
@@ -166,6 +225,15 @@ public class Shot : MonoBehaviour
                     hitEffect = Instantiate(hitEffectPrefab, hit.point, Quaternion.identity);
                 }
             }
+
+            string tagName = hit.collider.gameObject.tag;
+            if(tagName == "Enemy")
+            {
+                EnemyController enemy = hit.collider.gameObject.GetComponent<EnemyController>();
+                enemy.Hp -= damage;
+            }
         }
+
+        Ammo--;
     }
 }

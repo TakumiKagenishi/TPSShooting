@@ -30,6 +30,7 @@ public class EnemyController : MonoBehaviour
     Rigidbody rigidBody;
     NavMeshAgent agent;
     Shot shot;
+    GameManager gameManager;
 
     public int Hp
     {
@@ -56,6 +57,7 @@ public class EnemyController : MonoBehaviour
         boxCollider = GetComponent<BoxCollider>();
         rigidBody = GetComponent<Rigidbody>();
         agent = GetComponent<NavMeshAgent>();
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         target = GameObject.FindGameObjectWithTag("Player");
         shot = GameObject.FindGameObjectWithTag("Player").GetComponentInChildren<Shot>();
         InitCharacter();
@@ -100,10 +102,12 @@ public class EnemyController : MonoBehaviour
         moveEnabled = false;
         Stop();
         animator.SetTrigger("Dead");
+        gameManager.Kill++;
         boxCollider.enabled = false;
         rigidBody.isKinematic = true;
         yield return new WaitForSeconds(deadTime);
         Destroy(gameObject);
+        
     }
 
     private void OnCollisionStay(Collision collision)

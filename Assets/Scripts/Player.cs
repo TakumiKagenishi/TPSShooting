@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    private CharacterController characterController;
-    private Vector3 Velocity;
+    CharacterController characterController;
+    private Vector3 velocity;
     public Transform verRot;
     public Transform horRot;
     public float MoveSpeed;
@@ -21,10 +21,10 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-		float X_Rotation = Input.GetAxis("Mouse X");
-		float Y_Rotation = Input.GetAxis("Mouse Y");
-		horRot.transform.Rotate(new Vector3(0, X_Rotation * 2, 0));
-		verRot.transform.Rotate(-Y_Rotation * 2, 0, 0);
+		//float X_Rotation = Input.GetAxis("Mouse X");
+		//float Y_Rotation = Input.GetAxis("Mouse Y");
+		//horRot.transform.Rotate(new Vector3(0, X_Rotation * 2, 0));
+		//verRot.transform.Rotate(-Y_Rotation * 2, 0, 0);
 
 		if (Input.GetKey(KeyCode.W))
 		{
@@ -70,7 +70,7 @@ public class Player : MonoBehaviour
 			anim.SetBool("is_running", false);
 		}
 
-		characterController.Move(Velocity);
-		Velocity.y += Physics.gravity.y * Time.deltaTime;
+		characterController.Move(velocity);
+		velocity.y += Physics.gravity.y * Time.deltaTime;
 	}
 }

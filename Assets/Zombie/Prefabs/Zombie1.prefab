@@ -1770,7 +1770,6 @@ MonoBehaviour:
   maxHp: 100
   attackInterval: 2
   deadTime: 3
-  target: {fileID: 0}
 --- !u!195 &1240043254
 NavMeshAgent:
   m_ObjectHideFlags: 0
